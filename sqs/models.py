@@ -9,7 +9,7 @@ class School(models.Model):
 		return self.school_name+'/'+self.city_name
 
 class Student(models.Model):
-	student_id = models.CharField(max_length=100)
+	login_id = models.CharField(max_length=100,unique=True)
 	name = models.CharField(max_length=100)
 	password = models.CharField(max_length=100)
 	school = models.ForeignKey(School)

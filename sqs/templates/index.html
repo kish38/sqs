@@ -1,0 +1,50 @@
+{% load static %}
+<html>
+
+<script src = "{%static "jquery/jquery.js" %}"></script>
+<link href="{%static "jquery-ui.css" %}" rel="stylesheet">
+<script src = "{%static "jquery-ui.js" %}"></script>
+<style>
+	body{
+		font-family: "Trebuchet MS", sans-serif;
+		margin: 50px 100px 100px 100px;
+		min-width: 500px;
+	}
+	.login_c{
+		text-align:right;
+		cursor: pointer;
+		display: inline-block;
+		text-decoration: underline;
+	}
+	.container{
+		margin: 50px;
+	}
+	</style>
+
+<h1>Student's Quiz System</h1>
+
+<div class="ui-widget" style="border-bottom: 1px dotted grey;">
+	<div style="width: 79%;float: left;">Quizes will be conducted here and you can check leaderboards</div>
+	<div class="login_c">Login Here</div> <br></br>
+</div>
+
+<div class="container">
+<div id="accordion">
+	<h3>First</h3>
+	<div>Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.</div>
+	<h3>Second</h3>
+	<div>Phasellus mattis tincidunt nibh.</div>
+	<h3>Third</h3>
+	<div>Nam dui erat, auctor a, dignissim quis.</div>
+</div>
+</div>
+<script>
+
+$( "#accordion" ).accordion();
+$('.login_c').on('click',function(){
+	$.get('register',function(data){
+		$('.container').html(data);
+	});
+});
+</script>
+</html>

@@ -20,5 +20,6 @@ import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^sample/',views.sample),
+    url(r'^$',views.index),
+    url(r'^register$',views.register),
 ]
