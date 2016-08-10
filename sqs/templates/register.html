@@ -1,8 +1,24 @@
 <html>
-<form method="post">{% csrf_token %}
+
+{% if messages %}
+	{% for message in messages %}
+		<div class="alert success">{{message}}</div>
+	{% endfor %}
+{% endif %}
+<form method="post" action="register" id="register_form">{% csrf_token %}
 <table>
 {{ form.as_table }}
 </table>
 <button type="submit" >Save</button>
 </form>
+<script type="text/javascript">
+
+$('#register_form').on('submit',function( event ) {
+  event.preventDefault();
+  $.post('register',data=$(this).serialize(),function(data){
+  	$('.container').html(data);
+  });
+});
+
+</script>
 </html>
