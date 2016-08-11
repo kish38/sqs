@@ -1,0 +1,6 @@
+<div>
+<form method="post" action="csv_upload" enctype="multipart/form-data" id="process_csv">{% csrf_token %}
+<input type="file" name="csv_file" id="file">
+<input type="submit" value="Process CSV">
+</form>
+</div>

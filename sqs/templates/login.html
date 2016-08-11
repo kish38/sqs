@@ -1,0 +1,52 @@
+{% if request.session.login_id == None %}
+
+	{% if messages %}
+		{% for message in messages %}
+			<div class="alert success">{{message}}</div>
+		{% endfor %}
+	{% endif %}
+	<form action="login" method = "post" id="login_form">{% csrf_token %}
+		<table>
+			<tr>
+				<td>Login as</td>
+				<td>
+					<select name="user">
+						<option>student</option>
+						<option>teacher</option>
+						<option>admin</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Login ID</td>
+				<td><input type="text" name="loginid" required></td>
+			</tr>
+			<tr>
+				<td>Password</td>
+				<td><input type="password" name="password" required></td>
+			</tr>
+			<tr>
+				<td colspan=2><input type="submit" value="Login"></td>
+			</tr>
+		</table>
+	</form>
+	{% else %}
+		Logged in as {{request.session.login_id}}
+{% endif %}
+<script type="text/javascript">
+
+$('#login_form').submit(function( event ) {
+  event.preventDefault();
+  $.ajax({
+  	url: "login",
+  	method:'POST',
+  	data:$(this).serialize(),
+  	error:$('.container').html('Internal Error, Try Again'),
+  	success:function(data){
+  		$('.container').html(data);
+  	},
+  	complete:$('.container').html('loading...')
+});
+});
+
+</script>

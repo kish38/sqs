@@ -1,0 +1,48 @@
+{% load static %}
+<html>
+
+<script src = "{%static "jquery/jquery.js" %}"></script>
+<link href="{%static "jquery-ui.css" %}" rel="stylesheet">
+<script src = "{%static "jquery-ui.js" %}"></script>
+<style>
+	body{
+		font-family: "Trebuchet MS", sans-serif;
+		margin: 50px 100px 100px 100px;
+		min-width: 500px;
+	}
+	.options{
+		text-align:right;
+		cursor: pointer;
+		display: inline-block;
+		text-decoration: underline;
+	}
+</style>
+<h1>Student's Quiz System</h1>
+<div class="ui-widget" style="border-bottom: 1px dotted grey;">
+	<div style="width: 79%;float: left;">Quizes conducted and leaderboards</div>
+	<div class="options" id="quizadd">Add Quiz</div>
+	<br></br>
+</div>
+<div class="container">
+	<div id="quiz_setup">
+	</div>
+</div>
+
+<script type="text/javascript">
+	$.get('quiz_setup',function(data){
+		$('#quiz_setup').html(data);
+	})
+$('#quizadd').on('click',function(data){
+	$.ajax({
+	  	url: "csv_upload",
+	  	method:'GET',
+	  	success:function(data){
+	  		$('.container').html(data);
+	  	},
+	  	complete:$('.container').html('loading...')
+	});
+
+});
+</script>
+
+</html>

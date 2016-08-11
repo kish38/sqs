@@ -10,7 +10,16 @@ class School(models.Model):
 
 class Student(models.Model):
 	school = models.ForeignKey(School, related_name="students")
-	login_id = models.CharField(max_length=100)
+	login_id = models.CharField(max_length=100, unique=True)
+	name = models.CharField(max_length=100)
+	password = models.CharField(max_length=100)
+
+	def __str__(self):
+		return self.name
+
+class Teacher(models.Model):
+	school = models.ForeignKey(School, related_name="teachers")
+	login_id = models.CharField(max_length = 100, unique=True)
 	name = models.CharField(max_length=100)
 	password = models.CharField(max_length=100)
 
@@ -27,7 +36,7 @@ class Quiz(models.Model):
 		return self.title
 
 class Question(models.Model):
-	quiz = models.ForeignKey(Quiz, related_name = "quiz")
+	quiz = models.ForeignKey(Quiz, related_name = "questions")
 	question_text = models.TextField()
 	choice = models.IntegerField()
 
@@ -35,7 +44,7 @@ class Question(models.Model):
 		return self.question_text
 
 class Answer(models.Model):
-	question = models.ForeignKey(Question, related_name = "question")
+	question = models.ForeignKey(Question, related_name = "answers")
 	answer_text = models.TextField()
 	correct = models.BooleanField()
 

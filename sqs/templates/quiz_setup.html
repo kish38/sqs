@@ -1,3 +1,34 @@
 <html>
-
+<form method="post" action="quiz_setup" id="quiz_setup_form">{% csrf_token %}
+<input type="hidden" value="{{display}}" name="display">
+<table>
+{{ quizf.as_table }}
+{{ quesf.as_table }}
+{{ answf.as_table }}
+</table>
+<button type="submit" >Save</button>
+</form>
 </html>
+<script type="text/javascript">
+	$('#id_quiz-start_date').datepicker({ minDate: 0 });
+	$('#id_quiz-end_date').datepicker({ minDate: 0 });
+	$('#id_start_date').datepicker({ minDate: 0 });
+	$('#id_end_date').datepicker({ minDate: 0 });
+
+$('#quiz_setup_form').submit(function( event ) {
+  event.preventDefault();
+
+  $.ajax({
+  	url: "quiz_setup",
+  	method:'POST',
+  	data:$(this).serialize(),
+  	error:$('.container').html('Internal Error, Try Again'),
+  	success:function(data){
+  		$('.container').html(data);
+  	},
+  	complete:$('.container').html('loading...')
+   });
+
+});
+
+</script>

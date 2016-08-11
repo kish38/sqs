@@ -22,4 +22,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$',views.index),
     url(r'^register$',views.register),
+    url(r'^login$',views.login),
+    url(r'^logout$',views.logout),
+    url(r'^sqsadmin/$',views.admin),
+    url(r'^sqsadmin/quiz_setup$',views.quiz_setup),
+    url(r'^sqsadmin/csv_upload$',views.csv_upload),
+
 ]
