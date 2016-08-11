@@ -1,14 +1,34 @@
-<html>
-<form method="post" action="quiz_setup" id="quiz_setup_form">{% csrf_token %}
-<input type="hidden" value="{{display}}" name="display">
-<table>
-{{ quizf.as_table }}
-{{ quesf.as_table }}
-{{ answf.as_table }}
-</table>
-<button type="submit" >Save</button>
-</form>
-</html>
+{% if quiz_id %}
+  <script type="text/javascript">
+    $.ajax({
+    url: "csv_upload",
+    method:'GET',
+    data:$(this).serialize(),
+    error:$('#quiz_setup').html('Internal Error, Try Again'),
+    success:function(data){
+      $('#quiz_setup').html(data);
+      $('#process_csv').append('<input type="text" value="{{quiz_id}}" name="quiz_id">');
+    },
+    complete:$('#quiz_setup').html('loading...')
+   });
+
+    console.log($('#process_csv').serialize());
+  </script>
+
+  {% else %}
+
+  <form method="post" action="quiz_setup" id="quiz_setup_form">{% csrf_token %}
+  <input type="hidden" value="{{display}}" name="display">
+  <table>
+  {{ quizf.as_table }}
+  {{ quesf.as_table }}
+  {{ answf.as_table }}
+  </table>
+  <button type="submit" >Save</button>
+  </form>
+  
+
+{% endif %}
 <script type="text/javascript">
 	$('#id_quiz-start_date').datepicker({ minDate: 0 });
 	$('#id_quiz-end_date').datepicker({ minDate: 0 });
@@ -22,11 +42,11 @@ $('#quiz_setup_form').submit(function( event ) {
   	url: "quiz_setup",
   	method:'POST',
   	data:$(this).serialize(),
-  	error:$('.container').html('Internal Error, Try Again'),
+  	error:$('#quiz_setup').html('Internal Error, Try Again'),
   	success:function(data){
-  		$('.container').html(data);
+  		$('#quiz_setup').html(data);
   	},
-  	complete:$('.container').html('loading...')
+  	complete:$('#quiz_setup').html('loading...')
    });
 
 });

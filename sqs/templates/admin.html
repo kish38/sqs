@@ -4,6 +4,7 @@
 <script src = "{%static "jquery/jquery.js" %}"></script>
 <link href="{%static "jquery-ui.css" %}" rel="stylesheet">
 <script src = "{%static "jquery-ui.js" %}"></script>
+<script src = "{%static "jquery.form.js" %}"></script>
 <style>
 	body{
 		font-family: "Trebuchet MS", sans-serif;
@@ -37,9 +38,9 @@ $('#quizadd').on('click',function(data){
 	  	url: "csv_upload",
 	  	method:'GET',
 	  	success:function(data){
-	  		$('.container').html(data);
+	  		$('#quiz_setup').html(data);
 	  	},
-	  	complete:$('.container').html('loading...')
+	  	complete:$('#quiz_setup').html('loading...')
 	});
 
 });

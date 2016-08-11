@@ -1,6 +1,17 @@
-<div>
-<form method="post" action="csv_upload" enctype="multipart/form-data" id="process_csv">{% csrf_token %}
-<input type="file" name="csv_file" id="file">
-<input type="submit" value="Process CSV">
-</form>
-</div>
+<div id='csv_upload'>
+{% if file_required %}
+	<form method="post" action="csv_upload" enctype="multipart/form-data" id="process_csv">{% csrf_token %}
+	<input type="file" name="csv_file" id="file" required>
+	<input type="submit" value="Process CSV">
+	</form>
+	</div>
+
+	{% else %}
+		results
+{% endif %}
+<script type="text/javascript">
+$('#process_csv').ajaxForm(function(data){
+	beforeSend:$('#csv_upload').html('processing');
+	success:$('#csv_upload').html(data);
+});
+</script>
