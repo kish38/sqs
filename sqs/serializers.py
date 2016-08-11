@@ -13,10 +13,16 @@ class SchoolSerializer(serializers.ModelSerializer):
 		model = School
 		fields = ('sc_id','school_name','city_name','students')
 
+class AnswerSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Answer
+		fields = ('question','answer_text','correct')
+		
 class QuestionSerializer(serializers.ModelSerializer):
+	answers = AnswerSerializer(many=True, read_only=True)
 	class Meta:
 		model = Question
-		fields = ('quiz','question_text','choice')
+		fields = ('quiz','question_text','choice','answers')
 
 class QuizSerializer(serializers.ModelSerializer):
 	questions = QuestionSerializer(many=True, read_only=True)
