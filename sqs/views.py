@@ -3,7 +3,7 @@ from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
 
 from .forms import StudentForm,QuizForm,QuestionForm,AnswerForm,UploadCSVForm
-from .models import Student,Quiz,Question,Answer,StudentAnswers
+from .models import School,Student,Quiz,Question,Answer,StudentAnswers
 from .serializers import QuizSerializer
 
 import csv,datetime
@@ -16,12 +16,16 @@ def index(request):
 		context['login_id'] = request.session['login_id']
 	if 'logged_user' in request.session:
 		context['logged_user'] = request.session['logged_user']
+	lbd = get_leaderboard()
+	context['leaders'] = lbd['leaders']
+	context['school_leaders'] = lbd['school_leaders']
+
 	return render_to_response('index.html',context)
 
 def register(request):
 	if request.method == "POST":
 		request.POST = request.POST.copy()
-		request.POST['password'] = request.POST['password'].encode('base64')
+		request.POST['password'] = request.POST['password'].encode('base64').strip()
 		form = StudentForm(request.POST)
 		if form.is_valid():
 			post = form.save(commit=False)
@@ -30,7 +34,7 @@ def register(request):
 				request,'Registration Success'
 				)
 	else:
-		form = StudentForm()
+		form = StudentForm(initial={'max_number': '3'})
 	return render(request,'register.html',{'form':form})
 
 def login(request):
@@ -48,8 +52,8 @@ def login(request):
 				)
 		else:
 			request.session['login_id'] = request.POST['loginid']
-			request.session['logged_user'] = 'student'
-
+			request.session['logged_user'] = request.POST['user']
+			print request.POST['user']
 	return render(request,'login.html',context)
 
 def logout(request):
@@ -144,7 +148,15 @@ def prepare_quiz(request):
 
 	context = {'quiz_data':quiz_data}
 	if(request.GET['display'] == 'quiz_details'):
-		context['student_answers'] = dumps(request.GET['student_answers'].replace("u'","'"))
+		student_answers = eval(request.GET['student_answers'].replace("u'","'"))
+		context['score'] = request.GET['score']
+		for question in quiz_data['questions']:
+			if str(question['answers'][0]['question']) in student_answers:
+				try:
+					question['option'] = int(student_answers[str(question['answers'][0]['question'])])
+				except Exception,e:
+					question['option'] = student_answers[str(question['answers'][0]['question'])]
+		print quiz_data
 	return render(request,request.GET['display']+'.html',context)
 
 def submit_quiz(request):
@@ -174,4 +186,28 @@ def submit_quiz(request):
 		
 		StudentAnswers.objects.create(quiz_id=quiz_id,quiz_title=Quiz.objects.get(pk=quiz_id).title,login_id=request.session['login_id'],user_answers=answers,score=score)
 
-		return HttpResponse(score)
+		return HttpResponse("<p class='bg-success' style='padding:15px;font-weight:bold;'> Quiz Submitted </br>Result will be available in your Home <i class='glyphicon glyphicon-ok pull-right'></i></p>")
+
+def get_leaderboard():
+	quizes = Quiz.objects.all()
+	leaders = []
+	school_leaders = []
+	for quiz in quizes:
+		best = StudentAnswers.objects.filter(quiz_id=quiz.id).order_by('-score')
+		st_ids = [st.login_id for st in best]
+		students = Student.objects.filter(login_id__in=st_ids)
+		for st_id in st_ids:
+			student = students.get(login_id=st_id)
+			leaders.append({'quiz_name':quiz.title,'school_name':student.school.school_name,'score':best.get(login_id=st_id).score,'student_name':student.name,'city_name':student.school.city_name})
+			del st_id
+		schools = School.objects.all()
+		st_ids = [st.login_id for st in best]
+		for school in schools:
+			students = Student.objects.filter(login_id__in=st_ids).filter(school=school)
+			sc_leaders=[]
+			for student in students:
+				sc_leaders.append({'quiz_name':quiz.title,'school_name':student.school.school_name,'score':best.get(login_id=student.login_id).score,'student_name':student.name})
+				del st_ids[st_ids.index(student.login_id)]
+			if len(sc_leaders) > 0:
+				school_leaders.append(sc_leaders)
+	return {'leaders':leaders,'school_leaders':school_leaders}

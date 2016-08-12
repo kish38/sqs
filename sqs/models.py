@@ -13,18 +13,12 @@ class Student(models.Model):
 	login_id = models.CharField(max_length=100, unique=True)
 	name = models.CharField(max_length=100)
 	password = models.CharField(max_length=100)
+	CHOICES = (('student','student'),('teacher','teacher'))
+	user = models.CharField(max_length=100,choices=CHOICES,default="student")
 
 	def __str__(self):
 		return self.name
 
-class Teacher(models.Model):
-	school = models.ForeignKey(School, related_name="teachers")
-	login_id = models.CharField(max_length = 100, unique=True)
-	name = models.CharField(max_length=100)
-	password = models.CharField(max_length=100)
-
-	def __str__(self):
-		return self.name
 
 class Quiz(models.Model):
 	title = models.CharField(max_length=200,unique=True)

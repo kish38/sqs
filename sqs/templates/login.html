@@ -5,15 +5,14 @@
 			<div class="alert success">{{message}}</div>
 		{% endfor %}
 	{% endif %}
-	<form action="login" method = "post" id="login_form">{% csrf_token %}
-		<table>
+	<form action="login" method = "post" id="login_form" style="width:50%;margin-left:auto;margin-right:auto">{% csrf_token %}
+		<table class="table">
 			<tr>
 				<td>Login as</td>
 				<td>
 					<select name="user">
 						<option>student</option>
 						<option>teacher</option>
-						<option>admin</option>
 					</select>
 				</td>
 			</tr>
@@ -25,9 +24,8 @@
 				<td>Password</td>
 				<td><input type="password" name="password" required></td>
 			</tr>
-			<tr>
-				<td colspan=2><input type="submit" value="Login"></td>
-			</tr>
+			
+			<tr><td></td><td><button type="submit" class="btn btn-primary">Login</button></td></tr>
 		</table>
 	</form>
 	{% else %}

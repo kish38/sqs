@@ -1,29 +1,41 @@
 <style type="text/css">
 	blockquote{
 		border-color:#AA6708;
-		color:#728468;
+		
+	}
+	.answer{
+		padding:15px;
+		width: 70%;
 	}
 </style>
 <div class="row" id="quiz_container">
 	<div>
-		<h2>{{quiz_data.title}}</h2> <p class="pull-right">{{quiz_data.duration}} min</p>
+		<h2>{{quiz_data.title}} <span class="pull-right">Score:{{score}}</span></h2> 
 	</div>
 
 	<div>
-{{student_answers}}
-	
 		{% for question in quiz_data.questions %}
 		<blockquote>
 			<p>{{question.question_text}} </p>
 				{% if question.answers|length == 1 %}
-					<textarea name="{{question.answers.0.question}}"></textarea>
-			{% else %}
-				{% for answer in question.answers %}
-					<p class="btn"  id="radio_{{answer.question}}"  data="{{answer.id}}"> {{answer.answer_text}}
-					{% if answer.correct == True %}
-						<i class="glyphicon glyphicon-ok-sign"></i>
+					{% if question.option == question.answers.0.answer_text %}
+						<p class="answer bg-success">{{question.answers.0.answer_text}} <i class="glyphicon glyphicon-ok-sign pull-right"></i></p>
+					{% else %}
+						<p class="answer bg-danger">{{question.option}} <i class="glyphicon glyphicon-remove-sign pull-right"></i></p>
+						<p class="answer bg-success">{{question.answer.0.answer_text}} <i class="glyphicon glyphicon-ok-sign pull-right"></i></p>
 					{% endif %}
-					</p><br></br>
+				{% else %}
+				{% for answer in question.answers %}
+					{% if question.option == answer.id and answer.correct == False %}
+						<p class="answer bg-danger"  id="radio_{{answer.question}}"  data="{{answer.id}}"><input type="radio" checked disabled> {{answer.answer_text}}<i class="glyphicon glyphicon-remove-sign pull-right"></i>
+					{% elif question.option == answer.id and answer.correct == True %}
+						<p class="answer bg-success"  id="radio_{{answer.question}}"  data="{{answer.id}}"><input type="radio" checked disabled> {{answer.answer_text}}<i class="glyphicon glyphicon-ok-sign pull-right"></i>
+					{% elif answer.correct == True %}
+						<p class="answer bg-success"  id="radio_{{answer.question}}"  data="{{answer.id}}"><input type="radio" disabled> {{answer.answer_text}}<i class="glyphicon glyphicon-ok-sign pull-right"></i>
+					{% else %}
+						<p class="answer "  id="radio_{{answer.question}}"  data="{{answer.id}}"><input type="radio" disabled> {{answer.answer_text}}
+					{% endif %}
+					</p>
 					
 				{% endfor %}
 			{% endif %}

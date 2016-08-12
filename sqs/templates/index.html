@@ -15,67 +15,135 @@
 		text-align:right;
 		cursor: pointer;
 		display: inline-block;
-		text-decoration: underline;
 	}
 	.container{
-		margin-top: 50px;
+		margin-top: 3%;
+		padding-left:5%;
+		border-bottom: 1px dotted grey;
+	}
+	.leaderboard{
+		
+		border-radius: 5px;
+	}
+
+	.header h1{
+		color:#2A2AD8;
+	}
+	a{
+		color:#000;
 	}
 	</style>
-
+{% if login_id %}
+		<title>Leaderboards</title>
+	{% else %}
+		<title>Quiz App</title>
+{% endif %}
+<div class="header">
 <h1>Student's Quiz System</h1>
 <div class="ui-widget" style="border-bottom: 1px dotted grey;">
-	<div style="width: 79%;float: left;">Quizes will be conducted here and you can check leaderboards</div>
+	<div style="float:left;font-weight:bold">Quizes will be conducted here and you can check leaderboards</div>
+		<div class="pull-right">
 	{% if login_id == None %}
-		<div class="options" id="login">Login Here</div>
-		<div class="options" id="register">Register</div>
+		<a class="btn options btn-info" href='/'>Home</a>
+		<div class="btn btn-success options" id="login">Login Here</div>
+		<div class="btn btn-warning options" id="register">Register</div>
 		{% else %}
 		<a href="{{logged_user}}" class="options">Home</a>
 		<div class="options" id="logout">Logout</div>
 	{% endif %}
+		</div>
 	<br></br>
 </div>
-
+</div>
 <div class="container">
-<div id="accordion">
-	<h3>First</h3>
-	<div>Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet.</div>
-	<h3>Second</h3>
-	<div>Phasellus mattis tincidunt nibh.</div>
-	<h3>Third</h3>
-	<div>Nam dui erat, auctor a, dignissim quis.</div>
+	
+	<div class="row">
+		<div class="col-md-6 leaderboard">
+			<h4> City Leaderboard </h4>
+			<table class="table table-striped table-bordered">
+				<thead>
+				<tr>
+					<th>Student</th>
+					<th>School</th>
+					<th>City</th>
+					<th>Quiz</th>
+					<th>Score</th>
+				</tr>
+				</thead>
+				{% for row in leaders %}
+				<tr>
+					<td>{{row.student_name}}</td>
+					<td>{{row.school_name}}</td>
+					<td>{{row.city_name}}</td>
+					<td>{{row.quiz_name}}</td>
+					<td>{{row.score}}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+		<div class="col-md-6 leaderboard">
+			<h4> School Leaderboard</h4>
+			{% for school in school_leaders %}
+			<table class="table table-striped table-bordered bg-warning">
+				<thead>
+				<tr>
+					<th>Student</th>
+					<th>School</th>
+					<th>Quiz</th>
+					<th>Score</th>
+				</tr>
+				</thead>
+				{% for row in school %}
+				<tr>
+					<td>{{row.student_name}}</td>
+					<td>{{row.school_name}}</td>
+					<td>{{row.quiz_name}}</td>
+					<td>{{row.score}}</td>
+				</tr>
+				{% endfor %}
+			</table>
+			{% endfor %}
+		</div>
+	</div>
+	
 </div>
-</div>
+
 <script>
 
-$( "#accordion" ).accordion();
 
 $('#register').on('click',function(){
-	$.get('register',function(data){
-		$('.container').html(data);
+	$.ajax({
+	  	url: "register",
+	  	method:'GET',
+	  	success:function(data){
+	  		$('.container').html(data);
+	  	},
+	  	complete:$('.container').html('loading...')
 	});
 });
+
 
 $('#login').on('click',function(){
-/*
-	$.get('login',function(data){
-		$('.container').html(data);
+
+	$.ajax({
+	  	url: "login",
+	  	method:'GET',
+	  	success:function(data){
+	  		$('.container').html(data);
+	  	},
+	  	complete:$('.container').html('loading...')
 	});
-*/
-$.ajax({
-  	url: "login",
-  	method:'GET',
-  	success:function(data){
-  		$('.container').html(data);
-  	},
-  	complete:$('.container').html('loading...')
-});
 });
 $('#logout').on('click',function(){
-	$('container').html('loading...');
-	$.get('logout',function(data){
-		$('body').html(data);
-	});
+	$.ajax({
+			beforeSend:show_loading(),
+			type:'GET',
+  			url: "logout",
+  			success:function(data){$('body').html(data);},
+  	});
 });
-
+function show_loading(){
+	$('.container').html('Logging out...')
+}
 </script>
 </html>

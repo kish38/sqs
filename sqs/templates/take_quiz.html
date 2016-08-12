@@ -6,7 +6,7 @@
 </style>
 <div class="row" id="quiz_container">
 	<div>
-		<h2>{{quiz_data.title}}</h2> <p class="pull-right">{{quiz_data.duration}} min</p>
+		<h2>{{quiz_data.title}} <span class="pull-right" id="duration">{{quiz_data.duration}} min</span></h2>
 	</div>
 
 	<div>
@@ -25,7 +25,7 @@
 		</blockquote>
 		{% endfor %}
 
-		<input type="submit" class="btn btn-primary" value="Submit">
+		<input type="submit" class="btn btn-primary" onclick="return confirm('Submit')" value="Submit">
 	</form>
 
 	</div>
@@ -34,11 +34,8 @@
 <script type="text/javascript">
 	$('#quiz_form').submit(function( event ) {
   		event.preventDefault();
-  		if (confirm('Do you want to submit?') == false)
-  			return false
   		data = $(this).serialize();
   		data = data.replace(/radio_/g,'');
-  		alert(data);
   		$.ajax({
 		  	url: "submit_quiz",
 		  	method:'POST',
@@ -50,4 +47,23 @@
 		  	complete:$('#quiz_container').html('Submitting Quiz...')
 		});
 	});
+var count="{{quiz_data.duration}}";
+count = count*60
+
+var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
+
+function timer()
+{
+  count=count-1;
+  
+  if (count <= 0)
+  {
+     clearInterval(counter);
+     	$('#quiz_form').submit();
+  }
+  
+  	minutes = Math.floor(count / 60);
+  	$('#duration').html(minutes+':'+(count - minutes * 60));
+  
+}
 </script>

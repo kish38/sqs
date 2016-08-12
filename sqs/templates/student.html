@@ -52,12 +52,13 @@
 	<div class="row">
 		{% if quizes|length %}
 			<div class="col-md bg-success quizes" id="messages">New Quizes are available <i class="glyphicon glyphicon-ok-sign"></i></div>
-			<div class="col-md-8 bg-info quizes">
+			<h3>Available Quizes</h3>
 			{% for quiz_id,title in quizes.items%}
-				{{title}} <button class="btn btn-primary btn-xs pull-right" data="{{quiz_id}}" id="quiz_id">Take Quiz</button>
-
+			<p class="col-md-8 bg-info quizes">
+				{{title}} <button class="btn btn-primary btn-xs pull-right" onclick="take_quiz({{quiz_id}})" id="quiz_id">Take Quiz</button>
+			</p>
 			{% endfor %}
-			</div>
+			
 			{% else %}
 				<div class="col-md-8 bg-info quizes" id="messages">No New Quizes Available</div>
 			
@@ -74,12 +75,13 @@
 					<th></th>
 				</tr>
 				{% for quiz,val in quizestaken.items %}
-						<input type="text" id="{{quiz}}_answers" value="{{val.2}}"></input>
+						<input type="hidden" id="{{quiz}}_answers" value="{{val.2}}"></input>
+						<input type="hidden" id="{{quiz}}_score" value="{{val.1}}"></input>
 					<tr>
 						<td>{{quiz}}</td>
 						<td>{{val.0}}</td>
 						<td>{{val.1}}</td>
-						<td><button class="btn btn-primary btn-xs" data="{{quiz}}" id="quiz_details">Details</button></td>
+						<td><button class="btn btn-primary btn-xs" onclick="quiz_details({{quiz}})" id="quiz_details">Details</button></td>
 					</tr>
 				{% endfor %}
 			</table>
@@ -99,9 +101,7 @@
 <script type="text/javascript">
 	$('#messages').delay(1000).fadeOut(1000);;
 
-	$('#quiz_id').on('click',function(){
-		quiz_id = $('#quiz_id').attr('data');
-
+	function take_quiz(quiz_id){
 		$.ajax({
   			url: "prepare_quiz",
   			method:'GET',
@@ -111,22 +111,30 @@
   			},
   			complete:$('.container').html('Taking Quiz...')
 		});
-	});
+	}
 
-	$('#quiz_details').on('click',function(){
-		quiz_id = $('#quiz_details').attr('data');
+	function quiz_details(quiz_id){
 		student_answers = $('#'+quiz_id+'_answers').val();
+		score = $('#'+quiz_id+'_score').val();
 		
 		$.ajax({
   			url: "prepare_quiz",
   			method:'GET',
-  			data:{'quiz_id':quiz_id,'display':'quiz_details','student_answers':student_answers},
+  			data:{'quiz_id':quiz_id,'display':'quiz_details','student_answers':student_answers,'score':score},
+  			
   			success:function(data){
   				$('.container').html(data);
   			},
   			complete:$('.container').html('Getting Quiz Details...')
 		});
-	});
-
+	}
+$('#logout').on('click',function(){
+	$.ajax({
+  			url: "logout",
+  			method:'GET',
+  			success:function(data){$('body').html(data);window.location='/';},
+  			complete:$('.container').html('Loggin Out...'),
+  	});
+});
 </script>
 </html>

@@ -11,7 +11,9 @@ class StudentForm(forms.ModelForm):
 		widgets = {
             'password': forms.PasswordInput(),
         }
-		fields = ('login_id','name','password','school')
+		fields = ('login_id','name','password','school','user')
+
+
 
 class QuizForm(forms.ModelForm):
 	class Meta:
