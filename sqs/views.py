@@ -3,16 +3,19 @@ from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
 
 from .forms import StudentForm,QuizForm,QuestionForm,AnswerForm,UploadCSVForm
-from .models import Student,Question,Answer
+from .models import Student,Quiz,Question,Answer,StudentAnswers
+from .serializers import QuizSerializer
 
-import csv
-
+import csv,datetime
+from json import loads,dumps
 
 
 def index(request):
 	context = {}
 	if 'login_id' in request.session :
 		context['login_id'] = request.session['login_id']
+	if 'logged_user' in request.session:
+		context['logged_user'] = request.session['logged_user']
 	return render_to_response('index.html',context)
 
 def register(request):
@@ -31,6 +34,7 @@ def register(request):
 	return render(request,'register.html',{'form':form})
 
 def login(request):
+	context = {}
 	if request.method == "POST":
 		password = request.POST['password'].encode('base64')
 		student_list = Student.objects.filter(login_id=request.POST['loginid'])
@@ -44,12 +48,14 @@ def login(request):
 				)
 		else:
 			request.session['login_id'] = request.POST['loginid']
+			request.session['logged_user'] = 'student'
 
-	return render(request,'login.html',{})
+	return render(request,'login.html',context)
 
 def logout(request):
 	if 'login_id' in request.session:
 		request.session.pop('login_id')
+		request.session.pop('logged_user')
 	return render(request,'index.html',{})
 def admin(request):
 	return render(request,'admin.html',{})
@@ -109,3 +115,63 @@ def process_csv(csv_file,quiz_id):
 		pos += 1
 
 	print 'check it'
+
+def student_view(request):
+	context = {}
+	if 'login_id' in request.session:
+		context = {'quizes':{}}
+		student = Student.objects.get(login_id=request.session['login_id'])
+		quizes = Quiz.objects.filter(end_date__gte=datetime.datetime.now())
+		quizestaken = StudentAnswers.objects.filter(login_id=request.session['login_id'])
+		quizestaken = {quizt.quiz_id:[str(quizt.quiz_title),str(quizt.score),quizt.user_answers] for quizt in quizestaken}
+		context['quizestaken'] = quizestaken
+		for i in quizes:
+			if str(i.id) not in quizestaken:
+				context['quizes'][i.id]=i.title
+		context['schoolmates'] =[scm.name for scm in Student.objects.filter(school=student.school).exclude(id=student.id)]
+
+	return render(request,'student.html',context)
+def teacher_view(request):
+	return render(request,'teacher.html',{})
+
+def prepare_quiz(request):
+	quiz_id = request.GET['quiz_id']
+	quiz = Quiz.objects.get(pk=quiz_id)
+	quiz_ser = QuizSerializer(quiz)
+	quiz_ser = quiz_ser.data
+
+	quiz_data = loads(dumps(quiz_ser))
+
+	context = {'quiz_data':quiz_data}
+	if(request.GET['display'] == 'quiz_details'):
+		context['student_answers'] = dumps(request.GET['student_answers'].replace("u'","'"))
+	return render(request,request.GET['display']+'.html',context)
+
+def submit_quiz(request):
+	if request.method == 'POST':
+		answers = loads(dumps(request.POST))
+		answers.pop('csrfmiddlewaretoken')
+		quiz_id = answers.pop('quiz_id')
+		'''
+		quiz = Quiz.objects.get(pk=quiz_id)
+		quiz_ser = QuizSerializer(quiz)
+		quiz_data = loads(dumps(quiz_ser.data))
+		'''
+		score = 0
+
+
+		questions = [qtn.id for qtn in Question.objects.filter(quiz=quiz_id)]
+		correct_ans_mult = Answer.objects.filter(question__in=questions,correct=True).exclude(question__choice=1)
+		correct_ans_essay = Answer.objects.filter(question__in=questions,correct=True).exclude(question__choice__gt=1)
+		
+		for c_ans in correct_ans_mult:
+			if (str(c_ans.question.id) in answers) and (str(c_ans.id) == answers[str(c_ans.question.id)]):
+				score += 1
+		for c_ans in correct_ans_essay:
+			print c_ans.answer_text,answers[str(c_ans.question.id)]
+			if (c_ans.answer_text == answers[str(c_ans.question.id)]):
+				score += 1
+		
+		StudentAnswers.objects.create(quiz_id=quiz_id,quiz_title=Quiz.objects.get(pk=quiz_id).title,login_id=request.session['login_id'],user_answers=answers,score=score)
+
+		return HttpResponse(score)

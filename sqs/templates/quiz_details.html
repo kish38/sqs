@@ -1,0 +1,41 @@
+<style type="text/css">
+	blockquote{
+		border-color:#AA6708;
+		color:#728468;
+	}
+</style>
+<div class="row" id="quiz_container">
+	<div>
+		<h2>{{quiz_data.title}}</h2> <p class="pull-right">{{quiz_data.duration}} min</p>
+	</div>
+
+	<div>
+{{student_answers}}
+	
+		{% for question in quiz_data.questions %}
+		<blockquote>
+			<p>{{question.question_text}} </p>
+				{% if question.answers|length == 1 %}
+					<textarea name="{{question.answers.0.question}}"></textarea>
+			{% else %}
+				{% for answer in question.answers %}
+					<p class="btn"  id="radio_{{answer.question}}"  data="{{answer.id}}"> {{answer.answer_text}}
+					{% if answer.correct == True %}
+						<i class="glyphicon glyphicon-ok-sign"></i>
+					{% endif %}
+					</p><br></br>
+					
+				{% endfor %}
+			{% endif %}
+		</blockquote>
+		{% endfor %}
+
+		
+
+	</div>
+
+</div>
+<script type="text/javascript">
+	var student_answers = "{{student_answers}}";
+	console.log(student_answers);
+</script>

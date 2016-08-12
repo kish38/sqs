@@ -50,3 +50,14 @@ class Answer(models.Model):
 
 	def __str__(self):
 		return self.answer_text
+
+class StudentAnswers(models.Model):
+
+	quiz_id = models.CharField(max_length=100)
+	quiz_title = models.CharField(max_length=100,default='title')
+	login_id = models.CharField(max_length=100)
+	user_answers = models.CharField(max_length=1000)
+	score = models.IntegerField(default=0)
+
+	def __str__(self):
+		return self.quiz_id+'/'+self.login_id

@@ -32,6 +32,9 @@
 	</form>
 	{% else %}
 		Logged in as {{request.session.login_id}}
+		<script type="text/javascript">
+			window.location = '/{{request.session.logged_user}}'
+		</script>
 {% endif %}
 <script type="text/javascript">
 

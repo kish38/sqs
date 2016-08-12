@@ -16,7 +16,7 @@ class SchoolSerializer(serializers.ModelSerializer):
 class AnswerSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Answer
-		fields = ('question','answer_text','correct')
+		fields = ('question','answer_text','correct','id')
 		
 class QuestionSerializer(serializers.ModelSerializer):
 	answers = AnswerSerializer(many=True, read_only=True)
