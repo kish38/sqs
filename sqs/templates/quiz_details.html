@@ -17,12 +17,12 @@
 		{% for question in quiz_data.questions %}
 		<blockquote>
 			<p>{{question.question_text}} </p>
-				{% if question.answers|length == 1 %}
+				{% if question.choice == 1 %}
 					{% if question.option == question.answers.0.answer_text %}
 						<p class="answer bg-success">{{question.answers.0.answer_text}} <i class="glyphicon glyphicon-ok-sign pull-right"></i></p>
 					{% else %}
 						<p class="answer bg-danger">{{question.option}} <i class="glyphicon glyphicon-remove-sign pull-right"></i></p>
-						<p class="answer bg-success">{{question.answer.0.answer_text}} <i class="glyphicon glyphicon-ok-sign pull-right"></i></p>
+						<p class="answer bg-success">{{question.answers.0.answer_text}} <i class="glyphicon glyphicon-ok-sign pull-right"></i></p>
 					{% endif %}
 				{% else %}
 				{% for answer in question.answers %}

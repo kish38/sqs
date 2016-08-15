@@ -1,7 +1,7 @@
 {% load static %}
 <html>
 
-{% if request.session.login_id and request.session.logged_user == 'teacher' %}
+{% if request.session.logged_user == 'teacher' %}
 
 <script src = "{%static "jquery/jquery.js" %}"></script>
 <script src = "{%static "js/bootstrap.min.js" %}"></script>
@@ -32,23 +32,32 @@
 		padding:15px;
 		border-radius: 5px;
 	}
+	.header h1{
+		color:#2A2AD8;
+	}
+	a{
+		color:#000;
+	}
 	</style>
 <title>Teacher | {{request.session.login_id}}</title>
+<div class="header">
 <h1>Student's Quiz System</h1>
 <div class="ui-widget" style="border-bottom: 1px dotted grey;">
-	<div style="width: 79%;float: left;">Quizes will be conducted here and you can check leaderboards</div>
-	{% if request.session.login_id == None %}
-		<div class="options" id="login">Login Here</div>
-		<div class="options" id="register">Register</div>
-		{% else %}
-		<a href="" class="options">Home</a>
-		<a href="/" class="options">Leaderboard</a>
-		<div class="options" id="logout">Logout</div>
-	{% endif %}
+	<div style="float:left;font-weight:bold">Quizes will be conducted here and you can check leaderboards</div>
+		<div class="pull-right">
+		<a href="" class="btn btn-success">Home</a>
+		<a href="/" class="btn btn-info">Leaderboard</a>
+		<button class="btn btn-warning" id="logout">Logout</button>
+		</div>
 	<br></br>
+</div>
 </div>
 
 <div class="container">
 </div>
 </html>
+{% else %}
+		<script type="text/javascript">
+			window.location = '/'
+		</script>
 {%endif%}

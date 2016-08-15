@@ -17,7 +17,7 @@ class Student(models.Model):
 	user = models.CharField(max_length=100,choices=CHOICES,default="student")
 
 	def __str__(self):
-		return self.name
+		return self.name+'/'+self.user
 
 
 class Quiz(models.Model):

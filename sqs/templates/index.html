@@ -48,8 +48,8 @@
 		<div class="btn btn-success options" id="login">Login Here</div>
 		<div class="btn btn-warning options" id="register">Register</div>
 		{% else %}
-		<a href="{{logged_user}}" class="options">Home</a>
-		<div class="options" id="logout">Logout</div>
+		<a href="{{logged_user}}" class="btn btn-success">Home</a>
+		<div class="btn btn-warning" id="logout">Logout</div>
 	{% endif %}
 		</div>
 	<br></br>
@@ -136,10 +136,10 @@ $('#login').on('click',function(){
 });
 $('#logout').on('click',function(){
 	$.ajax({
-			beforeSend:show_loading(),
-			type:'GET',
   			url: "logout",
-  			success:function(data){$('body').html(data);},
+  			method:'GET',
+  			success:function(data){$('body').html(data);window.location='/';},
+  			complete:$('.container').html('Loggin Out...'),
   	});
 });
 function show_loading(){

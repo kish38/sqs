@@ -2,11 +2,11 @@
 
 	{% if messages %}
 		{% for message in messages %}
-			<div class="alert success">{{message}}</div>
+			<div class="alert alert-danger">{{message}}</div>
 		{% endfor %}
 	{% endif %}
 	<form action="login" method = "post" id="login_form" style="width:50%;margin-left:auto;margin-right:auto">{% csrf_token %}
-		<table class="table">
+		<table class="table table-bordered">
 			<tr>
 				<td>Login as</td>
 				<td>

@@ -1,6 +1,5 @@
 {% load static %}
 <html>
-
 <script src = "{%static "jquery/jquery.js" %}"></script>
 <script src = "{%static "js/bootstrap.min.js" %}"></script>
 <link href="{%static "jquery-ui.css" %}" rel="stylesheet">
@@ -16,14 +15,27 @@
 		text-align:right;
 		cursor: pointer;
 		display: inline-block;
-		text-decoration: underline;
 	}
-</style>
+	.container{
+		margin-top: 3%;
+		padding-left:5%;
+		border-bottom: 1px dotted grey;
+	}
+
+	.header h1{
+		color:#2A2AD8;
+	}
+	a{
+		color:#000;
+	}
+	</style>
+<title>SQS Admin</title>
+<div class="header">
 <h1>Student's Quiz System</h1>
 <div class="ui-widget" style="border-bottom: 1px dotted grey;">
-	<div style="width: 79%;float: left;">Quizes conducted and leaderboards</div>
-	<div class="options" id="quizadd">Add Quiz</div>
+	<div style="float:left;font-weight:bold">Quizes will be conducted here and you can check leaderboards</div>
 	<br></br>
+</div>
 </div>
 <div class="container">
 	<div id="quiz_setup">
@@ -31,12 +43,8 @@
 </div>
 
 <script type="text/javascript">
-	$.get('quiz_setup',function(data){
-		$('#quiz_setup').html(data);
-	})
-$('#quizadd').on('click',function(data){
 	$.ajax({
-	  	url: "csv_upload",
+	  	url: "quiz_setup",
 	  	method:'GET',
 	  	success:function(data){
 	  		$('#quiz_setup').html(data);
@@ -44,7 +52,6 @@ $('#quizadd').on('click',function(data){
 	  	complete:$('#quiz_setup').html('loading...')
 	});
 
-});
 </script>
 
 </html>

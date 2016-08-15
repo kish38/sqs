@@ -19,11 +19,13 @@
 
   <form method="post" action="quiz_setup" id="quiz_setup_form">{% csrf_token %}
   <input type="hidden" value="{{display}}" name="display">
+  <table class="table">
   {{ quizf.as_table }}
   {{ quesf.as_table }}
   {{ answf.as_table }}
 
-  <button type="submit" >Save</button>
+  <tr><td></td><td><button type="submit" class="btn btn-primary">Save</button></td></tr>
+  </table>
   </form>
   
 

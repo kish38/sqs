@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 from .forms import StudentForm,QuizForm,QuestionForm,AnswerForm,UploadCSVForm
 from .models import School,Student,Quiz,Question,Answer,StudentAnswers
-from .serializers import QuizSerializer
+from .serializers import QuizSerializer,SchoolSerializer
 
 import csv,datetime
 from json import loads,dumps
@@ -41,10 +41,10 @@ def login(request):
 	context = {}
 	if request.method == "POST":
 		password = request.POST['password'].encode('base64')
-		student_list = Student.objects.filter(login_id=request.POST['loginid'])
+		student_list = Student.objects.filter(login_id=request.POST['loginid'],user=request.POST['user'])
 		if len(student_list) < 1:
 			messages.success(
-				request,'No User Exists with login_id '+request.POST['loginid']
+				request,'No '+request.POST['user']+' Exists with login_id '+request.POST['loginid']
 				)
 		elif student_list[0].password != password.strip():
 			messages.success(
@@ -132,7 +132,7 @@ def student_view(request):
 		for i in quizes:
 			if str(i.id) not in quizestaken:
 				context['quizes'][i.id]=i.title
-		context['schoolmates'] =[scm.name for scm in Student.objects.filter(school=student.school).exclude(id=student.id)]
+		context['schoolmates'] =[scm.name for scm in Student.objects.filter(school=student.school,user=student.user).exclude(id=student.id)]
 
 	return render(request,'student.html',context)
 def teacher_view(request):
@@ -211,3 +211,12 @@ def get_leaderboard():
 			if len(sc_leaders) > 0:
 				school_leaders.append(sc_leaders)
 	return {'leaders':leaders,'school_leaders':school_leaders}
+
+def get_school_dashboard():
+	quizes = Quiz.objects.all()
+	school = Student.objects.get(login_id=request.session['login_id']).school
+	students = SchoolSerializer(school)
+	st_ids = [st['login_id'] for st in students.data['students']]
+	for quiz in quizes:
+		attempted = StudentAnswers.objects.filter(login_id__in=st_ids,quiz_id=quiz.id)
+		
