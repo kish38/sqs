@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^logout$',views.logout),
     url(r'^sqsadmin/$',views.admin),
     url(r'^sqsadmin/quiz_setup$',views.quiz_setup),
+    url(r'^sqsadmin/add_school$',views.add_school),
     url(r'^sqsadmin/csv_upload$',views.csv_upload),
 
 ]

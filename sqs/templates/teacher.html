@@ -1,7 +1,7 @@
 {% load static %}
 <html>
 
-{% if request.session.logged_user == 'teacher' %}
+{% if request.session.login_id and request.session.logged_user == 'teacher' %}
 
 <script src = "{%static "jquery/jquery.js" %}"></script>
 <script src = "{%static "js/bootstrap.min.js" %}"></script>
@@ -12,7 +12,7 @@
 	body{
 		font-family: "Trebuchet MS", sans-serif;
 		margin: 50px 100px 100px 100px;
-		min-width: 500px;
+		min-width: 800px;
 	}
 	.options{
 		text-align:right;
@@ -54,7 +54,71 @@
 </div>
 
 <div class="container">
+	{% if messages %}
+		{% for message in messages %}
+			<div class="alert alert-danger">{{message}} <i class="glyphicon glyphicon-remove pull-right" onclick="$('.alert').hide()"></i></div>
+		{% endfor %}
+	{% endif %}
+	
+<div style="width:70%;margin-left:auto;margin-right:auto">
+
+	{% for quiz in school_students %}
+		<table class="table table-bordered table-striped bg-warning">
+			
+		{% for title,details in quiz.items %}
+			<thead>
+			<tr><th colspan=4 style='text-align:center'>{{title}}</th></tr>
+			</thead>
+			<tr>
+				<th>name</th>
+				<th>login_id</th>
+				<th>score</th>
+				<th></th>
+			</tr>
+			{% for student_row in details %}
+			<input type="hidden" id="{{student_row.login_id}}_{{student_row.quiz_id}}_answers" value="{{student_row.student_answers}}"></input>
+						<input type="hidden" id="{{student_row.login_id}}_{{student_row.quiz_id}}_score" value="{{student_row.score}}"></input>
+				<tr>
+					<td>{{student_row.student_name}}</td>
+					<td>{{student_row.login_id}}</td>
+					<td>{{student_row.score}}</td>
+					<td><button class="btn btn-primary btn-xs" onclick="quiz_details('{{student_row.login_id}}',{{student_row.quiz_id}})" id="quiz_details">Details</button></td>
+				</tr>
+			{% endfor %}
+		{% endfor %}
+		</table>
+
+	{% endfor %}
+
 </div>
+
+</div>
+
+
+<script type="text/javascript">
+function quiz_details(login_id,quiz_id){
+		student_answers = $('#'+login_id+'_'+quiz_id+'_answers').val();
+		score = $('#'+login_id+'_'+quiz_id+'_score').val();
+		$.ajax({
+  			url: "prepare_quiz",
+  			method:'GET',
+  			data:{'quiz_id':quiz_id,'display':'quiz_details','student_answers':student_answers,'score':score},
+  			
+  			success:function(data){
+  				$('.container').html(data);
+  			},
+  			complete:$('.container').html('Getting Quiz Details...')
+		});
+	}
+$('#logout').on('click',function(){
+	$.ajax({
+  			url: "logout",
+  			method:'GET',
+  			success:function(data){$('body').html(data);window.location='/';},
+  			complete:$('.container').html('Loggin Out...'),
+  	});
+});
+</script>
 </html>
 {% else %}
 		<script type="text/javascript">

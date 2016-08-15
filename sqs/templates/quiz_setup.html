@@ -16,10 +16,10 @@
   </script>
 
   {% else %}
-
+<h4>New Quiz Setup</h4>
   <form method="post" action="quiz_setup" id="quiz_setup_form">{% csrf_token %}
   <input type="hidden" value="{{display}}" name="display">
-  <table class="table">
+  <table class="table table-bordered">
   {{ quizf.as_table }}
   {{ quesf.as_table }}
   {{ answf.as_table }}

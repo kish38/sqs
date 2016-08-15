@@ -13,6 +13,10 @@ class StudentForm(forms.ModelForm):
         }
 		fields = ('login_id','name','password','school','user')
 
+class SchoolForm(forms.ModelForm):
+	class Meta:
+		model = School
+		fields = ('sc_id','school_name','city_name')
 
 
 class QuizForm(forms.ModelForm):

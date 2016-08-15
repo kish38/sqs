@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
 
-from .forms import StudentForm,QuizForm,QuestionForm,AnswerForm,UploadCSVForm
+from .forms import StudentForm,QuizForm,QuestionForm,AnswerForm,UploadCSVForm,SchoolForm
 from .models import School,Student,Quiz,Question,Answer,StudentAnswers
 from .serializers import QuizSerializer,SchoolSerializer
 
@@ -43,11 +43,11 @@ def login(request):
 		password = request.POST['password'].encode('base64')
 		student_list = Student.objects.filter(login_id=request.POST['loginid'],user=request.POST['user'])
 		if len(student_list) < 1:
-			messages.success(
+			messages.error(
 				request,'No '+request.POST['user']+' Exists with login_id '+request.POST['loginid']
 				)
 		elif student_list[0].password != password.strip():
-			messages.success(
+			messages.error(
 				request,'Invalid Credentials'
 				)
 		else:
@@ -136,7 +136,14 @@ def student_view(request):
 
 	return render(request,'student.html',context)
 def teacher_view(request):
-	return render(request,'teacher.html',{})
+	context = {}
+	if 'login_id' in request.session:
+		school_students = get_school_dashboard(request.session['login_id'])
+		if len(school_students)>0:
+			context['school_students'] = school_students
+		else:
+			messages.error(request,'No Quizes data will be available right now')
+	return render(request,'teacher.html',context)
 
 def prepare_quiz(request):
 	quiz_id = request.GET['quiz_id']
@@ -150,13 +157,14 @@ def prepare_quiz(request):
 	if(request.GET['display'] == 'quiz_details'):
 		student_answers = eval(request.GET['student_answers'].replace("u'","'"))
 		context['score'] = request.GET['score']
+		print student_answers
 		for question in quiz_data['questions']:
 			if str(question['answers'][0]['question']) in student_answers:
 				try:
 					question['option'] = int(student_answers[str(question['answers'][0]['question'])])
 				except Exception,e:
 					question['option'] = student_answers[str(question['answers'][0]['question'])]
-		print quiz_data
+		#print quiz_data
 	return render(request,request.GET['display']+'.html',context)
 
 def submit_quiz(request):
@@ -212,11 +220,29 @@ def get_leaderboard():
 				school_leaders.append(sc_leaders)
 	return {'leaders':leaders,'school_leaders':school_leaders}
 
-def get_school_dashboard():
+def get_school_dashboard(login_id):
 	quizes = Quiz.objects.all()
-	school = Student.objects.get(login_id=request.session['login_id']).school
+	school = Student.objects.get(login_id=login_id).school
 	students = SchoolSerializer(school)
-	st_ids = [st['login_id'] for st in students.data['students']]
+	st_ids = {st['login_id']:st['name'] for st in students.data['students']}
+	school_students = []
+	
 	for quiz in quizes:
-		attempted = StudentAnswers.objects.filter(login_id__in=st_ids,quiz_id=quiz.id)
-		
+		quizes_taken=[]
+		attempted = StudentAnswers.objects.filter(login_id__in=st_ids.keys(),quiz_id=quiz.id).order_by('-score')
+		for attempt in attempted:
+			quizes_taken.append({'quiz_id':quiz.id,'student_name':st_ids[attempt.login_id],'login_id':attempt.login_id,'score':attempt.score,'student_answers':attempt.user_answers})
+		if len(quizes_taken)>0:
+			school_students.append({quiz.title:quizes_taken})
+	
+	return school_students
+
+def add_school(request):
+	if request.method == 'POST':
+		form = SchoolForm(request.POST)
+		if form.is_valid():
+			form.save()
+			messages.success(request,'New School Added')
+	else:
+		form = SchoolForm()
+	return render(request,'add_school.html',{'school_form':form})

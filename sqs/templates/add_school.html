@@ -1,0 +1,31 @@
+{% if messages %}
+	{% for message in messages %}
+		<div class="alert alert-success">{{message}}</div>
+	{% endfor %}
+{% endif %}
+<h4>Add New School</h4>
+<form action="add_school" method="post" id="add_school_form">
+	{% csrf_token %}
+	<table class="table table-bordered">
+		{{school_form.as_table}}
+		<tr><td></td><td><button class="btn btn-info">Add</button></td></tr>
+	</table>
+</form>
+<script type="text/javascript">
+$('#add_school_form').submit(function( event ) {
+  event.preventDefault();
+
+  $.ajax({
+  	url: "add_school",
+  	method:'POST',
+  	data:$(this).serialize(),
+  	error:$('#add_school').html('Internal Error, Try Again'),
+  	success:function(data){
+  		$('#add_school').html(data);
+  	},
+  	complete:$('#add_school').html('loading...')
+   });
+
+});
+
+</script>

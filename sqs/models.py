@@ -1,7 +1,7 @@
 from django.db import models
 
 class School(models.Model):
-	sc_id = models.CharField(max_length=100)
+	sc_id = models.CharField(max_length=100,unique=True)
 	school_name = models.CharField(max_length=100)
 	city_name = models.CharField(max_length=100)
 

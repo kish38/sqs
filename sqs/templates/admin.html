@@ -34,11 +34,16 @@
 <h1>Student's Quiz System</h1>
 <div class="ui-widget" style="border-bottom: 1px dotted grey;">
 	<div style="float:left;font-weight:bold">Quizes will be conducted here and you can check leaderboards</div>
+	<div class="pull-right">
+	<a class="btn options btn-info" href='/sqsadmin'>Home</a>
+	</div>
 	<br></br>
 </div>
 </div>
 <div class="container">
-	<div id="quiz_setup">
+	<div id="add_school" class="col-md-6">
+	</div>
+	<div id="quiz_setup" class="col-md-6">
 	</div>
 </div>
 
@@ -50,6 +55,15 @@
 	  		$('#quiz_setup').html(data);
 	  	},
 	  	complete:$('#quiz_setup').html('loading...')
+	});
+
+	$.ajax({
+	  	url: "add_school",
+	  	method:'GET',
+	  	success:function(data){
+	  		$('#add_school').html(data);
+	  	},
+	  	complete:$('#add_school').html('loading...')
 	});
 
 </script>
