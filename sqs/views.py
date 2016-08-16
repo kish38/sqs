@@ -82,7 +82,7 @@ def csv_upload(request):
 	if request.method == 'POST':
 		context['file_required'] = 0
 		csv_file = request.FILES['csv_file']
-		file_path = 'C:\Users\kishore.netala\Desktop\sqs\static\\'+csv_file.name
+		file_path = '/tmp/'+csv_file.name
 		try:
 			location = open(file_path,'wb+')
 		except Exception,e:
