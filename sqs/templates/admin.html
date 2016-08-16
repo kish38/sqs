@@ -1,6 +1,7 @@
 {% load static %}
 <html>
 <script src = "{%static "jquery/jquery.js" %}"></script>
+<script src = "{%static "jquery.form.js" %}"></script>
 <script src = "{%static "js/bootstrap.min.js" %}"></script>
 <link href="{%static "jquery-ui.css" %}" rel="stylesheet">
 <link href="{%static "css/bootstrap.min.css" %}" rel="stylesheet">
@@ -9,7 +10,7 @@
 	body{
 		font-family: "Trebuchet MS", sans-serif;
 		margin: 50px 100px 100px 100px;
-		min-width: 500px;
+		min-width: 800px;
 	}
 	.options{
 		text-align:right;
@@ -20,6 +21,7 @@
 		margin-top: 3%;
 		padding-left:5%;
 		border-bottom: 1px dotted grey;
+		min-width: 800px;
 	}
 
 	.header h1{
@@ -36,14 +38,23 @@
 	<div style="float:left;font-weight:bold">Quizes will be conducted here and you can check leaderboards</div>
 	<div class="pull-right">
 	<a class="btn options btn-info" href='/sqsadmin'>Home</a>
+	<a class="btn options btn-success" target="blank" href='/'>Leaderboard</a>
 	</div>
 	<br></br>
 </div>
 </div>
 <div class="container">
-	<div id="add_school" class="col-md-6">
+	<div class="row">
+		<div id="add_school" class="col-md-6">
+		</div>
+		<div id="quiz_setup" class="col-md-6">
+		</div>
 	</div>
-	<div id="quiz_setup" class="col-md-6">
+	<div class="row">
+		<div style="width:60%;margin-left: auto;margin-right: auto;">
+			<h3>* Instructions</h3>
+
+		</div>
 	</div>
 </div>
 

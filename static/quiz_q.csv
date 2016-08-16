@@ -1,26 +1,29 @@
 display quiz using csv
-q2 what is your name
+question no 1
 4
-kishore
-kumar
-netala
-one
+answer1
+answer2
+answer3
+answer4
 2
-q2 you know python
+question no 2
 1
-yes
+answer1
 1
-q2 3rd question
+question no 3
 4
-choice1
-choic2
-choice3
-choice4
+answer1
+answer2
+answer3
+answer4
 1
-q1 hobbies?
+question no 4
 4
-reading
-music
-chess
-other
+answer1
+answer2
+answer3
+answer4
 3
+
+
+

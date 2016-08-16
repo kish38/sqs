@@ -73,7 +73,7 @@ def quiz_setup(request):
 				quiz_p = form.save()
 				context['quiz_id'] = quiz_p.id
 	else:
-		form = QuizForm(prefix='quiz')
+		form = QuizForm()
 		context = {'quizf':form}
 	return render(request,'quiz_setup.html',context)
 
@@ -82,7 +82,7 @@ def csv_upload(request):
 	if request.method == 'POST':
 		context['file_required'] = 0
 		csv_file = request.FILES['csv_file']
-		file_path = 'C:\Users\kishorekumar\Desktop\sqs\static\\'+csv_file.name
+		file_path = 'C:\Users\kishore.netala\Desktop\sqs\static\\'+csv_file.name
 		try:
 			location = open(file_path,'wb+')
 		except Exception,e:
@@ -92,6 +92,8 @@ def csv_upload(request):
 		location.close()
 		try:
 			process_csv(file_path,request.POST['quiz_id'])
+			qser = QuizSerializer(Quiz.objects.get(pk=request.POST['quiz_id']))
+			context['added_quiz'] = qser.data
 		except Exception,e:
 			print e
 	return render(request,'csv_upload.html',context)
@@ -118,7 +120,6 @@ def process_csv(csv_file,quiz_id):
 			pos += 1
 		pos += 1
 
-	print 'check it'
 
 def student_view(request):
 	context = {}
@@ -132,12 +133,15 @@ def student_view(request):
 		for i in quizes:
 			if str(i.id) not in quizestaken:
 				context['quizes'][i.id]=i.title
-		context['schoolmates'] =[scm.name for scm in Student.objects.filter(school=student.school,user=student.user).exclude(id=student.id)]
+		context['schoolmates'] =[scm for scm in Student.objects.filter(school=student.school,user=student.user).exclude(id=student.id)]
+		context['student_name'] = student.name
 
 	return render(request,'student.html',context)
 def teacher_view(request):
 	context = {}
 	if 'login_id' in request.session:
+		student = Student.objects.get(login_id=request.session['login_id'])
+		context['student_name'] = student.name
 		school_students = get_school_dashboard(request.session['login_id'])
 		if len(school_students)>0:
 			context['school_students'] = school_students

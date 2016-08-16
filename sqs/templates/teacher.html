@@ -44,7 +44,7 @@
 <h1>Student's Quiz System</h1>
 <div class="ui-widget" style="border-bottom: 1px dotted grey;">
 	<div style="float:left;font-weight:bold">Quizes will be conducted here and you can check leaderboards</div>
-		<div class="pull-right">
+		<div class="pull-right">	
 		<a href="" class="btn btn-success">Home</a>
 		<a href="/" class="btn btn-info">Leaderboard</a>
 		<button class="btn btn-warning" id="logout">Logout</button>
@@ -61,7 +61,7 @@
 	{% endif %}
 	
 <div style="width:70%;margin-left:auto;margin-right:auto">
-
+	<div class="alert alert-success">Logged in as Teacher {{student_name}}</div>
 	{% for quiz in school_students %}
 		<table class="table table-bordered table-striped bg-warning">
 			

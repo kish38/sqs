@@ -1,17 +1,54 @@
 <div id='csv_upload'>
+<style>
+blockquote{
+		border-color:#AA6708;
+		
+	}
+.answer{
+		padding:15px;
+		width: 70%;
+		color:#43679C;
+	}
+</style>
 {% if file_required %}
+	<div class="alert alert-success">New Quiz Added, Please upload CSV file</div>
 	<form method="post" action="csv_upload" enctype="multipart/form-data" id="process_csv">{% csrf_token %}
-	<input type="file" name="csv_file" id="file" required>
-	<input type="submit" value="Process CSV">
+	<table class="table">
+	<tr><td>CSV File</td><td><input type="file" name="csv_file" id="file" required></td></tr>
+	<tr><td></td><td><input class="btn btn-info" type="submit" value="Process CSV"></td></tr>
+	<tr><td colspan="2"><strong>*CSV File Should be formatted mentioned below</strong></td></tr>
+	</table>
 	</form>
 	</div>
 
 	{% else %}
-		results
+		<div>
+			<div class="alert alert-success">Below added quiz will be reflected to students on mentioned dates</div>
+			<h4>{{added_quiz.title}} <span class="pull-right">Duration:{{added_quiz.duration}} mins</span></h4> 
+		</div>
+		<div>
+			{% for question in added_quiz.questions %}
+				<blockquote>
+					<p><strong>{{question.question_text}} </strong></p>
+					{% if question.choice == 1 %}
+						<p class="answer bg-success">{{question.answers.0.answer_text}} <i class="glyphicon glyphicon-ok-sign pull-right"></i></p>
+						{% else %}
+						{% for answer in question.answers %}
+							{% if answer.correct == True %}
+								<p class="answer bg-success">{{answer.answer_text}} <i class="glyphicon glyphicon-ok-sign pull-right"></i></p>
+							{% else %}
+								<p class="answer">{{answer.answer_text}}</p>
+							{% endif %}
+						{% endfor %}
+					{% endif %}
+				</blockquote>
+			{% endfor %}
+		</div>
+		
 {% endif %}
 <script type="text/javascript">
 $('#process_csv').ajaxForm(function(data){
-	beforeSend:$('#csv_upload').html('processing');
-	success:$('#csv_upload').html(data);
+	beforeSend:$('.container').html('processing');
+	success:$('.container').html(data);
 });
 </script>

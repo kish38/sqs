@@ -12,7 +12,7 @@
 	body{
 		font-family: "Trebuchet MS", sans-serif;
 		margin: 50px 100px 100px 100px;
-		min-width: 500px;
+		min-width: 800px;
 	}
 	
 	.container{
@@ -47,7 +47,11 @@
 	<br></br>
 </div>
 </div>
+
 <div class="container">
+	<div class="row">
+		<div class="alert alert-success">Logged in as {{student_name}}</div>
+	</div>
 	<div class="row">
 		{% if quizes|length %}
 			<div class="col-md bg-success quizes" id="messages">New Quizes are available <i class="glyphicon glyphicon-ok-sign"></i></div>
@@ -77,17 +81,30 @@
 						<input type="hidden" id="{{quiz}}_answers" value="{{val.2}}"></input>
 						<input type="hidden" id="{{quiz}}_score" value="{{val.1}}"></input>
 					<tr>
-						<td>{{quiz}}</td>
+						<td>{{forloop.counter}}</td>
 						<td>{{val.0}}</td>
 						<td>{{val.1}}</td>
 						<td><button class="btn btn-primary btn-xs" onclick="quiz_details({{quiz}})" id="quiz_details">Details</button></td>
+						
 					</tr>
 				{% endfor %}
 			</table>
 		{% endif %}
 	</div>
-	<div class="row"> School Mates
-	{{schoolmates}} </div>
+	<div class="row">
+	{% if schoolmates|length > 0 %}
+	<h3>SchoolMates</h3>
+	<table class="table table-bordered">
+	{% for student in schoolmates %}
+		<tr>
+			<td>{{forloop.counter}}</td>
+			<td>{{student.login_id}}</td>
+			<td>{{student.name}}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	{%endif%}
+	</div>
 </div>
 
 
@@ -127,6 +144,7 @@
   			complete:$('.container').html('Getting Quiz Details...')
 		});
 	}
+
 $('#logout').on('click',function(){
 	$.ajax({
   			url: "logout",
