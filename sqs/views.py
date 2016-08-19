@@ -6,7 +6,7 @@ from .forms import StudentForm,QuizForm,QuestionForm,AnswerForm,UploadCSVForm,Sc
 from .models import School,Student,Quiz,Question,Answer,StudentAnswers
 from .serializers import QuizSerializer,SchoolSerializer
 
-import csv,datetime
+import csv,datetime,os
 from json import loads,dumps
 
 
@@ -82,7 +82,8 @@ def csv_upload(request):
 	if request.method == 'POST':
 		context['file_required'] = 0
 		csv_file = request.FILES['csv_file']
-		file_path = '/tmp/'+csv_file.name
+		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+		file_path = os.path.join(BASE_DIR,csv_file.name)
 		try:
 			location = open(file_path,'wb+')
 		except Exception,e:
