@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import School,Student,Quiz,Question,Answer
+from sqs.models import School,Student,Quiz,Question,Answer
 from django.db import models
 
 class StudentSerializer(serializers.ModelSerializer):

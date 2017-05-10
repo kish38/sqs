@@ -19,7 +19,6 @@ def index(request):
 	lbd = get_leaderboard()
 	context['leaders'] = lbd['leaders']
 	context['school_leaders'] = lbd['school_leaders']
-
 	return render_to_response('index.html',context)
 
 def register(request):
@@ -53,7 +52,7 @@ def login(request):
 		else:
 			request.session['login_id'] = request.POST['loginid']
 			request.session['logged_user'] = request.POST['user']
-			print request.POST['user']
+			print( request.POST['user'])
 	return render(request,'login.html',context)
 
 def logout(request):
@@ -86,8 +85,8 @@ def csv_upload(request):
 		file_path = os.path.join(BASE_DIR,csv_file.name)
 		try:
 			location = open(file_path,'wb+')
-		except Exception,e:
-			print e
+		except Exception as e:
+			print (e)
 		for chunk in csv_file.chunks():
 			location.write(chunk)
 		location.close()
@@ -95,8 +94,8 @@ def csv_upload(request):
 			process_csv(file_path,request.POST['quiz_id'])
 			qser = QuizSerializer(Quiz.objects.get(pk=request.POST['quiz_id']))
 			context['added_quiz'] = qser.data
-		except Exception,e:
-			print e
+		except Exception as e:
+			print (e)
 	return render(request,'csv_upload.html',context)
 
 
@@ -162,12 +161,12 @@ def prepare_quiz(request):
 	if(request.GET['display'] == 'quiz_details'):
 		student_answers = eval(request.GET['student_answers'].replace("u'","'"))
 		context['score'] = request.GET['score']
-		print student_answers
+		print (student_answers)
 		for question in quiz_data['questions']:
 			if str(question['answers'][0]['question']) in student_answers:
 				try:
 					question['option'] = int(student_answers[str(question['answers'][0]['question'])])
-				except Exception,e:
+				except Exception as e:
 					question['option'] = student_answers[str(question['answers'][0]['question'])]
 		#print quiz_data
 	return render(request,request.GET['display']+'.html',context)
@@ -193,7 +192,7 @@ def submit_quiz(request):
 			if (str(c_ans.question.id) in answers) and (str(c_ans.id) == answers[str(c_ans.question.id)]):
 				score += 1
 		for c_ans in correct_ans_essay:
-			print c_ans.answer_text,answers[str(c_ans.question.id)]
+			print( c_ans.answer_text,answers[str(c_ans.question.id)])
 			if (c_ans.answer_text == answers[str(c_ans.question.id)]):
 				score += 1
 		

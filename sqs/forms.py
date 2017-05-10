@@ -51,4 +51,4 @@ class UploadCSVForm(forms.Form):
 	file = forms.FileField()
 
 	def process_csv_file(csv):
-		print csv.name
+		print (csv.name)
